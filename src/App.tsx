@@ -130,7 +130,7 @@ function monthLabel(key: string): string {
 
 function exportCsv(filename: string, rows: string[][]): void {
   const csv = rows
-    .map((row) => row.map((cell) => `"${String(cell ?? "").replaceAll('"', '""')}"`).join(";"))
+    .map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(";"))
     .join("\n");
 
   const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
@@ -229,7 +229,7 @@ useEffect(() => {
 
     try {
       const parsed = JSON.parse(raw) as { employees: Employee[]; shifts: Shift[] };
-      setEmployees(parsed.employees ?? DEFAULT_EMPLOYEES);
+      setEmployees(parsed.employees ?? []);
       setShifts(parsed.shifts ?? []);
     } catch {
       // ignore
@@ -593,7 +593,7 @@ async function addEmployee(): Promise<void> {
       ]),
     ];
 
-    exportCsv(`${employee.name.toLowerCase().replaceAll(" ", "-")}-${selectedMonth}.csv`, rows);
+    exportCsv(`${employee.name.toLowerCase().replace(/ /g, "-")}-${selectedMonth}.csv`, rows);
   }
 
   return (
